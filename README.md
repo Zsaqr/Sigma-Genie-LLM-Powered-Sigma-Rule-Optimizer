@@ -248,8 +248,12 @@ config.yaml for repos, paths, AI + Atomic options
 
 These files are not included in this public repo
 
-📸 Screenshots (examples)
-You can add real images in a docs/ folder and link them here.
+## 📸 Screenshots
+
+### Dashboard – Overview
+
+![Sigma Genie Dashboard Overview](docs/dashboard-overview.png)
+
 
 text
 Copy code
