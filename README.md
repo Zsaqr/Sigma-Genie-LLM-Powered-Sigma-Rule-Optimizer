@@ -1,13 +1,8 @@
-
 <h1 align="center">Sigma Genie</h1>
 
-<h3 align="center">
-LLM-Powered Sigma Rule Optimization & Automated Detection Validation
-</h3>
+<h3 align="center">LLM-Powered Sigma Rule Analysis, Optimization & Test Drafting</h3>
 
-<p align="center">
-AI-assisted detection engineering for security operations teams.
-</p>
+<p align="center">AI-assisted detection engineering for security operations teams.</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
@@ -18,67 +13,62 @@ AI-assisted detection engineering for security operations teams.
 </p>
 
 > **Project Type:** Freelance AI Engineering Project  
-> **Repository Type:** Technical Portfolio & Architecture Showcase
->
-> This repository documents the project's capabilities and high-level design.
-> The proprietary source code is not publicly available.
+> **Repository Type:** Technical Portfolio & Architecture Showcase  
+> **Source Availability:** Proprietary implementation; source code is not publicly available.
 
 ---
 
 ## Project Overview
 
-Sigma Genie applies Large Language Models (LLMs) and semantic similarity techniques to the management and optimization of Sigma detection rules.
+Sigma Genie is a Python-based application that uses Large Language Models (LLMs) and semantic similarity to assist with the review and optimization of Sigma detection rules.
 
-The system combines automated rule analysis, optimization, validation support, and reporting in a unified engineering workflow.
+It combines Git repository synchronization, incremental change tracking, embedding-based candidate retrieval, contextual rule classification, consolidation drafting, and a separate reporting dashboard. The workflow produces review artifacts for detection engineers rather than automatically deploying or validating detection rules in a SIEM.
 
-It is designed to support detection engineers, Security Operations Centers (SOCs), and security content engineering teams.
+### Dashboard Preview
 
-## Dashboard Preview
-
-The reporting dashboard provides visibility into the Sigma rule inventory, classification results, and processing status.
+The Flask reporting dashboard displays rule inventory statistics, classification statuses, and recorded processing information.
 
 ![Sigma Genie Dashboard Overview](docs/dashboard-overview.png)
 
-*Dashboard screenshot using data from public Sigma repositories. The displayed metrics represent recorded inventory and processing states. The Atomic Test Coverage indicator does not establish successful test execution or validated detection coverage.*
+*Screenshot from processing publicly available Sigma rule repositories. The displayed counts reflect recorded inventory and processing states. The “Atomic Test Coverage” indicator does not establish successful test execution or validated detection coverage. Interactive filtering and export features are not presented as verified functionality of the audited code version.*
 
 ## Business Problem
 
 Maintaining detection rules across multiple repositories creates several challenges:
 
 - Duplicate and overlapping detection logic.
-- Increased manual review and maintenance effort.
+- Repetitive manual rule comparison and maintenance.
 - Inconsistent rule organization.
-- Difficulty tracking changes and validation coverage.
-- Limited visibility into the overall detection rule inventory.
+- Difficulty identifying changes between processing runs.
+- Limited visibility into the rule inventory and review status.
 
-Sigma Genie addresses these challenges through AI-assisted analysis and automated processing.
-
+Sigma Genie addresses these challenges by preparing relevant rule comparisons and consolidation drafts for analyst review.
 
 ## My Contributions
 
 **Role: Sole AI Engineer & End-to-End Developer**
 
-Independently designed, developed, tested, and delivered the complete system as a freelance AI engineering project, taking full ownership of its architecture and implementation.
+Independently designed, developed, tested, and delivered the application as a freelance AI engineering project, taking ownership of its architecture and implementation.
 
 ### System Architecture & AI Engineering
 
-- Designed the end-to-end system architecture and processing workflows.
-- Integrated Google Gemini for contextual detection-rule analysis and optimization.
-- Implemented embedding-based semantic similarity and candidate retrieval.
-- Developed automated rule classification, deduplication, merging, and optimization workflows.
+- Designed the end-to-end batch processing architecture and rule analysis workflow.
+- Integrated Google Gemini for contextual analysis of detection-rule relationships and consolidation drafting.
+- Implemented embedding-based candidate retrieval using cosine similarity.
+- Developed rule-level classification and pairwise relationship analysis to identify unique, duplicate, and potentially mergeable content.
 
 ### Backend & Automation
 
-- Implemented Git repository integration, synchronization, and incremental rule processing.
-- Designed SQLite-based persistent state management, metadata tracking, and processing history.
-- Developed automated Atomic Red Team test generation and rule association.
-- Integrated the AI pipeline, database, automation, and reporting components.
+- Implemented Git repository synchronization, YAML discovery, and SHA-256-based change detection.
+- Built SQLite-backed rule inventory and persistent processing-state management.
+- Developed generation of Atomic Red Team-style test drafts for eligible rule outputs.
+- Integrated retrieval, model inference, status tracking, file generation, and reporting components.
 
-### Full-Stack Development & Delivery
+### Dashboard & Delivery
 
-- Built the Flask-based dashboard and frontend for monitoring, filtering, and reporting.
-- Conducted end-to-end testing, debugging, and system integration.
-- Managed project configuration, deployment preparation, and client delivery.
+- Developed a Flask-based dashboard for rule inventory and processing-status reporting.
+- Performed integration testing and debugging during development.
+- Prepared the application for deployment and delivered it to the client.
 
 **Project Status:** Successfully delivered and deployed in the client's environment, with operational status confirmed by the client.
 
@@ -86,111 +76,80 @@ Independently designed, developed, tested, and delivered the complete system as 
 
 | Capability | Description |
 | --- | --- |
-| Repository Integration | Synchronizes detection rules from multiple repositories. |
-| Incremental Processing | Identifies new and modified rules using content hashes. |
-| Semantic Similarity | Retrieves related detection rules using embeddings. |
-| LLM-Based Classification | Assesses relationships between rules through contextual AI analysis. |
-| Rule Optimization | Supports consolidation and duplicate management. |
-| Validation Support | Generates and associates Atomic Red Team tests. |
-| Persistent Tracking | Maintains rule metadata and processing state. |
-| Reporting | Provides status monitoring, filtering, and data exports. |
-
+| Repository Synchronization | Clones or updates configured Git rule repositories. |
+| Incremental Processing | Identifies new and modified YAML files using content hashes. |
+| Semantic Candidate Retrieval | Uses embeddings and cosine similarity to shortlist relevant rules. |
+| LLM-Based Classification | Produces contextual rule-level decisions and candidate relationships. |
+| Consolidation Drafting | Generates proposed merged Sigma YAML for review when rules are classified as mergeable. |
+| Test Draft Generation | Generates Atomic Red Team-style drafts for eligible rule output files; no automated test execution is claimed. |
+| Persistent Rule Inventory | Stores file metadata, hashes, and processing statuses in SQLite. |
+| Reporting Dashboard | Displays server-rendered inventory metrics, status summaries, and recent rule records. |
 
 ## System Architecture
 
-Sigma Genie combines deterministic data processing, 
-semantic retrieval, LLM-based decision-making, 
-persistent state management, and analyst reporting.
+Sigma Genie combines deterministic file processing, semantic retrieval, LLM-assisted decisions, persistent state management, and review-oriented outputs.
 
 ```mermaid
 flowchart TD
-    A[Sigma Rule Repositories] --> B[Repository Synchronization]
-    B --> C[Rule Discovery and Change Detection]
+    A["Sigma Rule Repositories"] --> B["Git Repository Synchronization"]
+    B --> C["Rule Discovery and SHA-256 Change Detection"]
 
-    C <-->|State Management| DB[(SQLite Rule Inventory)]
-    C --> D[Semantic Candidate Retrieval]
+    C <-->|"Inventory updates"| DB[("SQLite Rule Inventory")]
+    C --> D["Semantic Candidate Retrieval"]
     DB --> D
 
-    D --> E[LLM-Based Contextual Classification]
-
-    E --> F{Classification Decision}
+    D --> E["LLM-Based Contextual Classification"]
     E --> DB
+    E --> F{"Classification Decision"}
 
-    F --> G[Unique Rules]
-    F --> H[Mergeable Rules]
-    F --> I[Duplicate Rules]
-    F --> J[Pending Reconsideration]
+    F -->|"Unique / Distinct"| G["Unique Rule Output"]
+    F -->|"Mergeable"| H["Consolidation Draft"]
+    F -->|"Duplicate"| I["Record Decision"]
+    F -->|"Unknown"| J["Pending Reconsideration"]
 
-    G --> K[Retained Rule Files]
-    H --> L[LLM-Generated Consolidation Drafts]
     I --> DB
     J --> DB
+    G --> K["Eligible Rule Output Files"]
+    H --> K
+    K --> L["Atomic Test Draft Generation"]
+    L --> M["Test Drafts for Review"]
 
-    K --> M[Eligible Rule Outputs]
-    L --> M
-
-    M --> N[Atomic Red Team Test Draft Generation]
-    N --> O[Test Artifacts for Review]
-
-    DB --> P[Flask Reporting Dashboard]
+    DB --> N["Flask Reporting Dashboard"]
 ```
 
 ### Architecture Highlights
 
-- **Incremental Processing:** Content hashing identifies
-  new and modified rules for analysis.
+- **Incremental Processing:** SHA-256 fingerprints help detect new and modified rule files.
+- **Semantic Retrieval:** Embedding similarity shortlists comparison candidates before LLM analysis.
+- **Hybrid Decision-Making:** Deterministic processing works alongside LLM-based classification and drafting.
+- **Persistent State:** SQLite maintains rule metadata and processing status across batch runs.
+- **Review Artifacts:** Unique rule files, consolidation drafts, and test drafts support analyst review.
+- **Reporting:** A separate Flask application provides an overview of rule inventory and processing status.
 
-- **Semantic Retrieval:** Embedding-based similarity
-  retrieves relevant candidates before contextual
-  LLM analysis.
-
-- **Hybrid AI Decision-Making:** Deterministic processing
-  is combined with structured LLM-based classification
-  and conditional content generation.
-
-- **Persistent State:** SQLite maintains rule inventory,
-  metadata, and processing status across runs.
-
-- **Review Artifacts:** Selected rules, consolidation
-  drafts, and generated test drafts support subsequent
-  analyst review.
-
-- **Reporting Layer:** A dedicated Flask dashboard
-  presents rule inventory and processing status.
-
-> This diagram represents a high-level conceptual
-> architecture. Proprietary implementation details,
-> client data, and internal configurations are excluded.
-```
-
-The diagram illustrates the conceptual processing workflow rather than the proprietary implementation.
+> This diagram is a high-level conceptual view. It omits proprietary prompts, operational configuration, customer information, and implementation details. Test drafts are not automatically executed or validated.
 
 ## AI & Machine Learning Approach
 
 ### Semantic Candidate Retrieval
 
-Embedding-based similarity is used to identify related rules before contextual analysis.
-
-This approach narrows the candidate search space and helps avoid unnecessary LLM comparisons.
+The workflow uses embeddings and cosine similarity to select potentially related rules before contextual LLM comparison. Candidate selection is bounded to control the comparison context; it is not an exhaustive similarity assessment of every rule.
 
 ### Contextual Classification
 
-The LLM evaluates detection-rule relationships beyond exact textual matching, supporting the identification of redundant, related, and distinct detection logic.
+Google Gemini assesses a target rule against selected candidates and returns a rule-level decision along with relationships to individual candidates. These model-generated decisions are recommendations, not independently validated detection-quality measurements.
 
 ### Hybrid Engineering Approach
 
-The system combines deterministic processing with AI-assisted decisions rather than relying exclusively on an LLM.
-
-Content hashing, persistent state, semantic retrieval, and structured processing complement the AI analysis pipeline.
+SHA-256 hashing identifies file revisions, SQLite tracks processing state, embeddings select candidate comparisons, and an LLM analyzes relationships and drafts consolidated content where applicable.
 
 ## Engineering Highlights
 
-- Incremental processing of new and modified content.
-- Separation of deterministic logic and LLM-based analysis.
-- Persistent metadata and processing history.
-- Structured AI outputs for downstream processing.
-- Automated associations between rules and validation tests.
-- Centralized reporting and operational visibility.
+- End-to-end integration of Git ingestion, rule scanning, retrieval, inference, persistence, and file outputs.
+- Incremental rule processing using content hashes and saved processing state.
+- Embedding reuse, bounded candidate selection, and request limits to manage AI workload.
+- Retry and quota handling for supported model-generation calls.
+- Structured classification outputs for downstream processing.
+- Separation of batch analysis from inventory reporting.
 
 ## Technical Stack
 
@@ -198,30 +157,30 @@ Content hashing, persistent state, semantic retrieval, and structured processing
 | --- | --- |
 | Programming | Python |
 | Generative AI | Google Gemini API |
-| Semantic Retrieval | Text Embeddings |
-| State Management | SQLite |
-| Web Dashboard | Flask, HTML, CSS, JavaScript |
-| Data Formats | YAML, JSON, CSV |
-| Version Control | Git, GitHub |
-| Security Frameworks | Sigma, Atomic Red Team |
+| Semantic Retrieval | Gemini Embeddings, Cosine Similarity |
+| Persistence | SQLite, JSON-based vector cache |
+| Backend & Dashboard | Flask, Jinja, HTML, CSS, JavaScript |
+| Repository Integration | Git |
+| Data Formats | YAML, JSON |
+| Security Domain | Sigma Detection Rules, Atomic Red Team-style Drafts |
 
 ## Business Value
 
-The system is designed to:
+The application is designed to:
 
-- Reduce repetitive detection-rule review.
-- Support more consistent rule management.
-- Simplify detection content optimization.
-- Assist security teams with validation workflows.
-- Improve visibility into rule inventory and processing status.
+- Reduce repetitive manual comparison of similar detection rules.
+- Help analysts identify potential duplicates and overlapping detection logic.
+- Prepare consolidation proposals for review rather than automatically changing upstream rules.
+- Support review workflows with generated test drafts.
+- Improve visibility into the inventory and processing status of detection rules.
+
+*These are intended workflow benefits. Quantified time savings, detection accuracy, and test effectiveness have not been independently established.*
 
 ## Confidentiality
 
-This repository is a technical project showcase.
+This repository is a technical portfolio and architecture showcase, not the production source-code repository.
 
-Production source code, proprietary prompts, credentials, internal configurations, and customer-specific information are excluded.
-
-No commercial source code or confidential datasets are distributed through this repository.
+Proprietary code, prompts, internal configuration, credentials, private repository locations, and customer-specific information are excluded. The dashboard preview uses data from public Sigma repositories.
 
 ## Author
 
