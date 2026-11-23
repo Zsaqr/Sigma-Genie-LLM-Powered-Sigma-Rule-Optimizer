@@ -45,14 +45,34 @@ Maintaining detection rules across multiple repositories creates several challen
 
 Sigma Genie addresses these challenges through AI-assisted analysis and automated processing.
 
+
 ## My Contributions
 
-- Developed an AI-powered pipeline for Sigma rule analysis and classification.
-- Implemented semantic similarity analysis using text embeddings.
-- Integrated Google Gemini for contextual rule classification and optimization.
-- Developed rule tracking and deduplication workflows.
-- Implemented automated Atomic Red Team test generation and rule association.
-- Contributed to the end-to-end integration of analysis, processing, and reporting components.
+**Role: Sole AI Engineer & End-to-End Developer**
+
+Independently designed, developed, tested, and delivered the complete system as a freelance AI engineering project, taking full ownership of its architecture and implementation.
+
+### System Architecture & AI Engineering
+
+- Designed the end-to-end system architecture and processing workflows.
+- Integrated Google Gemini for contextual detection-rule analysis and optimization.
+- Implemented embedding-based semantic similarity and candidate retrieval.
+- Developed automated rule classification, deduplication, merging, and optimization workflows.
+
+### Backend & Automation
+
+- Implemented Git repository integration, synchronization, and incremental rule processing.
+- Designed SQLite-based persistent state management, metadata tracking, and processing history.
+- Developed automated Atomic Red Team test generation and rule association.
+- Integrated the AI pipeline, database, automation, and reporting components.
+
+### Full-Stack Development & Delivery
+
+- Built the Flask-based dashboard and frontend for monitoring, filtering, and reporting.
+- Conducted end-to-end testing, debugging, and system integration.
+- Managed project configuration, deployment preparation, and client delivery.
+
+**Project Status:** Successfully delivered and deployed in the client's environment, with operational status confirmed by the client.
 
 ## Key Capabilities
 
