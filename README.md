@@ -87,30 +87,72 @@ Independently designed, developed, tested, and delivered the complete system as 
 | Persistent Tracking | Maintains rule metadata and processing state. |
 | Reporting | Provides status monitoring, filtering, and data exports. |
 
+
 ## System Architecture
+
+Sigma Genie combines deterministic data processing, 
+semantic retrieval, LLM-based decision-making, 
+persistent state management, and analyst reporting.
 
 ```mermaid
 flowchart TD
-    A[Detection Rule Repositories] --> B[Repository Synchronization]
+    A[Sigma Rule Repositories] --> B[Repository Synchronization]
     B --> C[Rule Discovery and Change Detection]
-    C --> D[(Persistent State Database)]
-    D --> E[Semantic Similarity Analysis]
-    E --> F[LLM-Based Classification]
+
+    C <-->|State Management| DB[(SQLite Rule Inventory)]
+    C --> D[Semantic Candidate Retrieval]
+    DB --> D
+
+    D --> E[LLM-Based Contextual Classification]
+
+    E --> F{Classification Decision}
+    E --> DB
 
     F --> G[Unique Rules]
     F --> H[Mergeable Rules]
-    F --> I[Duplicate Tracking]
-    F --> J[Distinct Relationships]
+    F --> I[Duplicate Rules]
+    F --> J[Pending Reconsideration]
 
-    G --> K[Optimized Rule Collection]
-    H --> K
-    K --> L[Atomic Test Generation]
+    G --> K[Retained Rule Files]
+    H --> L[LLM-Generated Consolidation Drafts]
+    I --> DB
+    J --> DB
 
-    I --> M[(Reporting Data)]
-    J --> M
+    K --> M[Eligible Rule Outputs]
     L --> M
 
-    M --> N[Monitoring and Reporting Dashboard]
+    M --> N[Atomic Red Team Test Draft Generation]
+    N --> O[Test Artifacts for Review]
+
+    DB --> P[Flask Reporting Dashboard]
+```
+
+### Architecture Highlights
+
+- **Incremental Processing:** Content hashing identifies
+  new and modified rules for analysis.
+
+- **Semantic Retrieval:** Embedding-based similarity
+  retrieves relevant candidates before contextual
+  LLM analysis.
+
+- **Hybrid AI Decision-Making:** Deterministic processing
+  is combined with structured LLM-based classification
+  and conditional content generation.
+
+- **Persistent State:** SQLite maintains rule inventory,
+  metadata, and processing status across runs.
+
+- **Review Artifacts:** Selected rules, consolidation
+  drafts, and generated test drafts support subsequent
+  analyst review.
+
+- **Reporting Layer:** A dedicated Flask dashboard
+  presents rule inventory and processing status.
+
+> This diagram represents a high-level conceptual
+> architecture. Proprietary implementation details,
+> client data, and internal configurations are excluded.
 ```
 
 The diagram illustrates the conceptual processing workflow rather than the proprietary implementation.
