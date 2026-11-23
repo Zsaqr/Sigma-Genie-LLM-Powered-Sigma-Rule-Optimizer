@@ -1,346 +1,162 @@
-# Sigma Genie – AI-Powered Sigma Rule Optimizer & Atomic Test Generator
 
-> **Note:**  
-> This repository is a **high-level showcase** of the project architecture and capabilities.  
-> The **production source code is private** and not published here.
+<h1 align="center">Sigma Genie</h1>
 
----
+<h3 align="center">
+LLM-Powered Sigma Rule Optimization & Automated Detection Validation
+</h3>
 
-## 🚀 Overview
+<p align="center">
+AI-assisted detection engineering for security operations teams.
+</p>
 
-**Sigma Genie** is an AI-powered pipeline that ingests large Sigma rule sets from multiple repositories, classifies and optimizes them using LLMs, and automatically generates **Atomic Red Team tests** linked to each rule.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Google_Gemini-4285F4?style=flat-square&logo=google&logoColor=white" alt="Google Gemini">
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask">
+  <img src="https://img.shields.io/badge/YAML-CB171E?style=flat-square&logo=yaml&logoColor=white" alt="YAML">
+</p>
 
-It’s designed for:
-
-- Detection engineering teams
-- SOC / blue teams
-- Threat hunting / content engineering
-- Anyone managing **thousands of Sigma rules** across multiple repos
-
-The actual implementation is used as a **paid/private tool**.  
-This repo exists to showcase the **design, architecture, and capabilities** of the system.
-
----
-
-## ✨ Key Features
-
-- 🔁 **Multi-repo sync (GitHub + private repos)**  
-  - Syncs public Sigma repos (e.g. SigmaHQ + community)  
-  - Supports private GitHub repos via token  
-  - Keeps a local mirror for fast analysis
-
-- 📦 **Rule discovery & state tracking (SQLite)**  
-  - Scans `.yml` / `.yaml` Sigma rules and computes content hashes  
-  - Persists metadata in `rules` table (repo, path, title, hash, status, timestamps, atomic test link)  
-  - Detects:
-    - **new** rules  
-    - **updated** rules  
-    - unchanged rules (reused status)
-
-- 🧠 **LLM-powered rule classification (Gemini)**  
-  - Uses Google **Gemini 2.0 Flash** + embeddings (`text-embedding-004`)  
-  - For each new/updated rule, it:
-    - Finds similar candidate rules (via embeddings + family prefixes)
-    - Classifies rule as:
-      - `unique`
-      - `can_be_merged`
-      - `duplicate`
-      - `distinct`
-    - Produces a structured JSON-like result with:
-      - `final_classification`
-      - `reason`
-      - `per_candidate` relationships
-
-- 🧩 **Rule optimization & merging**
-  - Writes:
-    - **Unique rules** → `output/unique/`
-    - **Merged canonical rules** → `output/merged/`
-  - Duplicates are tracked in the DB but don’t create extra output noise
-
-- 🧪 **Automatic Atomic Red Team test generation**
-  - Generates Atomic tests for:
-    - rules in `output/unique/`
-    - rules in `output/merged/`
-  - Stores tests in `output/tests/`
-  - Links each rule to its test via `atomic_test_path` in the DB  
-  - Smart linking logic:
-    - Reuses existing tests when possible
-    - Avoids noisy logs on re-linking
-    - Handles cases where one test maps to multiple related rules
-
-- 📊 **Web Dashboard (Flask UI)**  
-  - Simple one-page dashboard backed by SQLite:
-    - **TOTAL RULES**
-    - **UNIQUE / CAN BE MERGED / DUPLICATE / MERGED / NEW / OLD**
-    - **RULES WITH ATOMIC TEST**
-    - **ATOMIC TEST COVERAGE** (with progress bar)
-  - **Filters / drill-down:**
-    - Filter by repo
-    - Filter by status
-    - “Has Atomic test only” checkbox
-    - Free-text search on title / file path  
-  - **Click-to-filter from cards:**
-    - Clicking `UNIQUE` filters the table to `status = unique`, etc.
-  - **Export:**
-    - Export current filtered view to **CSV**
-    - Export current filtered view to **JSON**
-  - **Quality of life:**
-    - Auto-refresh every X minutes (configurable)
-    - GitHub deep-links per rule (opens specific file in repo)
-    - Atomic test button opens the test file directly
+> **Project Type:** Freelance AI Engineering Project  
+> **Repository Type:** Technical Portfolio & Architecture Showcase
+>
+> This repository documents the project's capabilities and high-level design.
+> The proprietary source code is not publicly available.
 
 ---
 
-## 🧱 High-Level Architecture
-
-```text
-                 ┌───────────────────────────┐
-                 │   GitHub Repositories     │
-                 │  (SigmaHQ + community +   │
-                 │    private customer repo) │
-                 └────────────┬──────────────┘
-                              │ git clone / pull
-                              ▼
-                     ┌─────────────────┐
-                     │ Repo Sync Layer │
-                     │  (github_sync)  │
-                     └────────┬────────┘
-                              │ local files
-                              ▼
-                 ┌───────────────────────────┐
-                 │   Rule Scanner            │
-                 │  - find *.yml / *.yaml    │
-                 │  - compute content hash   │
-                 └────────┬─────────────────┘
-                          │
-                          ▼
-                ┌──────────────────────┐
-                │    State DB (SQLite) │
-                │   rules table:       │
-                │   - repo_name        │
-                │   - file_path        │
-                │   - rule_title       │
-                │   - rule_hash        │
-                │   - status           │
-                │   - atomic_test_path │
-                │   - updated_at       │
-                └────────┬─────────────┘
-                         │
-         new/updated     │
-         rules           ▼
-                ┌──────────────────────┐
-                │   AI Engine (LLM)    │
-                │  Google Gemini       │
-                │  - embeddings        │
-                │  - classification    │
-                └────────┬─────────────┘
-                         │
-                         ▼
-          ┌───────────────────────────────┐
-          │  Output Writer & Optimizer    │
-          │  - unique rules → output/unique/
-          │  - merged rules → output/merged/
-          │  - duplicates tracked only in DB
-          └────────────────┬──────────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Atomic Test Engine │
-                 │ - read unique/merged rules
-                 │ - generate Atomic tests
-                 │ - link tests to rules in DB
-                 └───────────┬────────┘
-                             │
-                             ▼
-                     ┌─────────────────┐
-                     │  Flask Dashboard│
-                     │  (read-only UI) │
-                     └─────────────────┘
-🧭 Data Flow (End-to-end)
-Repo sync
+## Project Overview
 
-The batch job syncs multiple GitHub repositories (public + private).
+Sigma Genie applies Large Language Models (LLMs) and semantic similarity techniques to the management and optimization of Sigma detection rules.
 
-Local mirror lives under a configurable repos_root.
+The system combines automated rule analysis, optimization, validation support, and reporting in a unified engineering workflow.
 
-Rule scan & state update
+It is designed to support detection engineers, Security Operations Centers (SOCs), and security content engineering teams.
 
-All .yml/.yaml files are scanned.
+## Business Problem
 
-If a rule is:
+Maintaining detection rules across multiple repositories creates several challenges:
 
-new → inserted with status new
+- Duplicate and overlapping detection logic.
+- Increased manual review and maintenance effort.
+- Inconsistent rule organization.
+- Difficulty tracking changes and validation coverage.
+- Limited visibility into the overall detection rule inventory.
 
-changed → hash updated + status reset to new
+Sigma Genie addresses these challenges through AI-assisted analysis and automated processing.
 
-unchanged → status preserved
+## My Contributions
 
-AI analysis (Gemini)
+- Developed an AI-powered pipeline for Sigma rule analysis and classification.
+- Implemented semantic similarity analysis using text embeddings.
+- Integrated Google Gemini for contextual rule classification and optimization.
+- Developed rule tracking and deduplication workflows.
+- Implemented automated Atomic Red Team test generation and rule association.
+- Contributed to the end-to-end integration of analysis, processing, and reporting components.
 
-For each new rule (up to a configurable max per run):
+## Key Capabilities
 
-Compute embeddings and find similar rules.
+| Capability | Description |
+| --- | --- |
+| Repository Integration | Synchronizes detection rules from multiple repositories. |
+| Incremental Processing | Identifies new and modified rules using content hashes. |
+| Semantic Similarity | Retrieves related detection rules using embeddings. |
+| LLM-Based Classification | Assesses relationships between rules through contextual AI analysis. |
+| Rule Optimization | Supports consolidation and duplicate management. |
+| Validation Support | Generates and associates Atomic Red Team tests. |
+| Persistent Tracking | Maintains rule metadata and processing state. |
+| Reporting | Provides status monitoring, filtering, and data exports. |
 
-Classify: unique, can_be_merged, duplicate, or distinct.
+## System Architecture
 
-Reasoning + per-candidate metadata stored alongside the status.
+```mermaid
+flowchart TD
+    A[Detection Rule Repositories] --> B[Repository Synchronization]
+    B --> C[Rule Discovery and Change Detection]
+    C --> D[(Persistent State Database)]
+    D --> E[Semantic Similarity Analysis]
+    E --> F[LLM-Based Classification]
 
-Unique & merged rules are written out to dedicated folders.
+    F --> G[Unique Rules]
+    F --> H[Mergeable Rules]
+    F --> I[Duplicate Tracking]
+    F --> J[Distinct Relationships]
 
-Atomic test generation & linking
+    G --> K[Optimized Rule Collection]
+    H --> K
+    K --> L[Atomic Test Generation]
 
-For rules in output/unique/ and output/merged/:
+    I --> M[(Reporting Data)]
+    J --> M
+    L --> M
 
-Generate an Atomic Red Team test (YAML).
+    M --> N[Monitoring and Reporting Dashboard]
+```
 
-Save it under output/tests/.
+The diagram illustrates the conceptual processing workflow rather than the proprietary implementation.
 
-Update the rules table with atomic_test_path.
+## AI & Machine Learning Approach
 
-Re-runs are idempotent: existing tests/links are reused where possible.
+### Semantic Candidate Retrieval
 
-Dashboard & reporting
+Embedding-based similarity is used to identify related rules before contextual analysis.
 
-Flask app reads from SQLite (read-only).
+This approach narrows the candidate search space and helps avoid unnecessary LLM comparisons.
 
-Displays:
+### Contextual Classification
 
-Counters by status
+The LLM evaluates detection-rule relationships beyond exact textual matching, supporting the identification of redundant, related, and distinct detection logic.
 
-Atomic test coverage
+### Hybrid Engineering Approach
 
-Latest updated rules
+The system combines deterministic processing with AI-assisted decisions rather than relying exclusively on an LLM.
 
-Supports filters, exports, GitHub deep-links and opening Atomic tests.
+Content hashing, persistent state, semantic retrieval, and structured processing complement the AI analysis pipeline.
 
-🛠 Tech Stack
-Language: Python
+## Engineering Highlights
 
-Backend batch job:
+- Incremental processing of new and modified content.
+- Separation of deterministic logic and LLM-based analysis.
+- Persistent metadata and processing history.
+- Structured AI outputs for downstream processing.
+- Automated associations between rules and validation tests.
+- Centralized reporting and operational visibility.
 
-Git / subprocess for repo sync
+## Technical Stack
 
-YAML parsing for Sigma rules
+| Category | Technologies |
+| --- | --- |
+| Programming | Python |
+| Generative AI | Google Gemini API |
+| Semantic Retrieval | Text Embeddings |
+| State Management | SQLite |
+| Web Dashboard | Flask, HTML, CSS, JavaScript |
+| Data Formats | YAML, JSON, CSV |
+| Version Control | Git, GitHub |
+| Security Frameworks | Sigma, Atomic Red Team |
 
-SQLite (via sqlite3) for state
+## Business Value
 
-AI / LLM:
+The system is designed to:
 
-Google Gemini 2.0 Flash
+- Reduce repetitive detection-rule review.
+- Support more consistent rule management.
+- Simplify detection content optimization.
+- Assist security teams with validation workflows.
+- Improve visibility into rule inventory and processing status.
 
-text-embedding-004 for semantic search
+## Confidentiality
 
-Prompt templates stored in external prompts.yaml
+This repository is a technical project showcase.
 
-Web UI:
+Production source code, proprietary prompts, credentials, internal configurations, and customer-specific information are excluded.
 
-Flask (single-page dashboard)
+No commercial source code or confidential datasets are distributed through this repository.
 
-Vanilla HTML/CSS/JS
+## Author
 
-Lightweight, no heavy frontend framework
+**Ziad Muhammed Saqr**  
+AI Engineer | Machine Learning & Generative AI
 
-Config & Secrets:
-
-config.yaml for repos, paths, AI + Atomic options
-
-.env for GEMINI_API_KEY, GITHUB_TOKEN, etc.
-
-These files are not included in this public repo
-
-## 📸 Screenshots
-
-### Dashboard – Overview
-
-![Sigma Genie Dashboard Overview](docs/dashboard-overview.png)
-
-
-text
-Copy code
-docs/
-  ├─ dashboard-overview.png
-  ├─ dashboard-filters.png
-  ├─ atomic-test-example.png
-  └─ architecture-diagram.png
-Example section:
-
-markdown
-Copy code
-### Dashboard Overview
-
-![Sigma Genie Dashboard](docs/dashboard-overview.png)
-
-### Atomic Test Linked to Rule
-
-![Atomic Test Link](docs/atomic-test-example.png)
-🧪 Typical Usage Pattern (Conceptual)
-This describes how the system is intended to run in production.
-Actual scripts & orchestration are not provided here.
-
-Schedule the batch job (via cron / Task Scheduler / CI runner) to run daily:
-
-Sync repos
-
-Scan rules
-
-Run AI analysis on new/changed rules
-
-Generate/link Atomic tests
-
-Keep the Flask dashboard running (e.g. behind Nginx or reverse proxy):
-
-Detection engineers & stakeholders can:
-
-Monitor rule status
-
-Check Atomic test coverage
-
-Export CSV/JSON for further analytics
-
-Use the dashboard + exports as input for:
-
-Backlog planning
-
-Content tuning
-
-Playbook creation
-
-QA / regression testing
-
-🔒 Security & Privacy
-No production code is published in this repository.
-
-No API keys, tokens, or customer-specific data are exposed.
-
-All sensitive configuration (config.yaml, .env, DB files, logs, etc.) live in private infrastructure and are excluded from version control in public repos.
-
-🗺️ Future Ideas & Extensions
-Potential future improvements (some already implemented privately):
-
-Multi-tenant / workspace-aware view
-
-Per-run metadata:
-
-Last run timestamp
-
-Number of rules processed
-
-Number of AI calls performed
-
-Quota / rate limit status
-
-Rule detail pages:
-
-Show full Sigma YAML + model reasoning + Atomic test content
-
-Integration with SIEM / log sources for:
-
-Rule performance / hit rates
-
-False positive feedback loops
-
-👤 Author
-Built by Ziad Muhammed Saqr
-(Detection Engineering / AI / Security Content)
-
-You can reach me via Gmail, GitHub or LinkedIn for collaboration or professional opportunities.
+- [LinkedIn](https://www.linkedin.com/in/ziadmuhammedsaqr/)
+- [GitHub](https://github.com/Zsaqr)
