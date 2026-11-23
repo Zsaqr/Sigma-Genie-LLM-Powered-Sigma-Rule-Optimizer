@@ -33,6 +33,14 @@ The system combines automated rule analysis, optimization, validation support, a
 
 It is designed to support detection engineers, Security Operations Centers (SOCs), and security content engineering teams.
 
+## Dashboard Preview
+
+The reporting dashboard provides visibility into the Sigma rule inventory, classification results, and processing status.
+
+![Sigma Genie Dashboard Overview](docs/dashboard-overview.png)
+
+*Dashboard screenshot using data from public Sigma repositories. The displayed metrics represent recorded inventory and processing states. The Atomic Test Coverage indicator does not establish successful test execution or validated detection coverage.*
+
 ## Business Problem
 
 Maintaining detection rules across multiple repositories creates several challenges:
